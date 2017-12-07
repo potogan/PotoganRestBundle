@@ -1,0 +1,60 @@
+services:
+    potogan.rest.client:
+        class: Potogan\REST\Client
+        arguments:
+            - https://example.com
+        calls:
+            - [ 'setTransformer', ['@potogan.rest.transformer'] ]
+            - [ 'setRequestFactory', ['@potogan.rest.request_factory'] ]
+            - [ 'setHttpClient', ['@potogan.rest.http_client'] ]
+            - [ 'addMiddleware', ['@potogan.rest.middleware.aware_request'] ]
+            - [ 'addMiddleware', ['@potogan.rest.middleware.body_provider'] ]
+
+    potogan.rest.request_factory:
+        class: Http\Message\Guzzle\RequestFactory
+
+    potogan.rest.stream_factory:
+        class: Http\Message\StreamFactory\GuzzleStreamFactory
+
+    potogan.rest.response_factory:
+        class: Http\Message\Guzzle\ResponseFactory
+
+    potogan.rest.http_client:
+        class: Http\Client\Socket\Client
+        arguments:
+            - '@potogan.rest.response_factory'
+
+    potogan.rest.transformer:
+        alias: potogan.rest.transformer.chain
+
+    potogan.rest.transformer.chain:
+        class: Potogan\REST\Transformer\Chain
+        calls:
+            - [ 'addTransformer', ['@potogan.rest.transformer.json']]
+
+    potogan.rest.transformer.json:
+        class: Potogan\REST\Transformer\Json
+
+
+    potogan.rest.middleware.aware_request:
+        class: Potogan\REST\Middleware\AwareRequest
+        arguments:
+            - '@potogan.rest.request_factory'
+
+    potogan.rest.middleware.body_provider:
+        class: Potogan\REST\Middleware\BodyProvider
+        arguments:
+            - '@potogan.rest.body_provider'
+            - '@potogan.rest.transformer'
+            - '@potogan.rest.stream_factory'
+
+    potogan.rest.body_provider:
+        alias: potogan.rest.body_provider.chain
+
+    potogan.rest.body_provider.chain:
+        class: Potogan\REST\BodyProvider\Chain
+        calls:
+            - [ 'addProvider', ['@potogan.rest.body_provider.aware_request'] ]
+
+    potogan.rest.body_provider.aware_request:
+        class: Potogan\REST\BodyProvider\AwareRequest
