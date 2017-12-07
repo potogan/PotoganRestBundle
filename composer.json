@@ -13,9 +13,15 @@
             "Potogan\\RESTBundle\\": "src"
         }
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://satis.potogan.potogan.com/"
+        }
+    ],
     "require": {
         "php": ">=5.5.9",
-        "symfony/framework-bundle": "",
+        "symfony/framework-bundle": "^1.0",
         "php-http/message": "^1.6",
         "php-http/socket-client": "^1.4",
         "ralfmaxxx/guzzle-psr7-http-message-factory": "^1.0"
