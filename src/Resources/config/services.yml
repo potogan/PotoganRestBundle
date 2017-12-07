@@ -1,12 +1,17 @@
 services:
     potogan.rest.client:
-        class: Potogan\REST\Client
+        factory_service: potogan.rest.client_factory
+        factory_method:  build
         arguments:
             - https://example.com
+
+    potogan.rest.client_factory:
+        class: Potogan\REST\ClientFactory
+        arguments:
+            - '@potogan.rest.request_factory'
+            - '@potogan.rest.transformer'
+            - '@potogan.rest.http_client'
         calls:
-            - [ 'setTransformer', ['@potogan.rest.transformer'] ]
-            - [ 'setRequestFactory', ['@potogan.rest.request_factory'] ]
-            - [ 'setHttpClient', ['@potogan.rest.http_client'] ]
             - [ 'addMiddleware', ['@potogan.rest.middleware.aware_request'] ]
             - [ 'addMiddleware', ['@potogan.rest.middleware.body_provider'] ]
 
@@ -31,22 +36,24 @@ services:
         class: Potogan\REST\Transformer\Chain
         calls:
             - [ 'addTransformer', ['@potogan.rest.transformer.json']]
+            - [ 'addTransformer', ['@potogan.rest.transformer.stream']]
 
     potogan.rest.transformer.json:
         class: Potogan\REST\Transformer\Json
 
+    potogan.rest.transformer.stream:
+        class: Potogan\REST\Transformer\Stream
+        arguments:
+            - '@potogan.rest.stream_factory'
 
     potogan.rest.middleware.aware_request:
         class: Potogan\REST\Middleware\AwareRequest
-        arguments:
-            - '@potogan.rest.request_factory'
 
     potogan.rest.middleware.body_provider:
         class: Potogan\REST\Middleware\BodyProvider
         arguments:
             - '@potogan.rest.body_provider'
             - '@potogan.rest.transformer'
-            - '@potogan.rest.stream_factory'
 
     potogan.rest.body_provider:
         alias: potogan.rest.body_provider.chain
