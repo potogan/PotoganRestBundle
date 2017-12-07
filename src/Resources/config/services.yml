@@ -11,9 +11,11 @@ services:
             - '@potogan.rest.request_factory'
             - '@potogan.rest.transformer'
             - '@potogan.rest.http_client'
-        calls:
-            - [ 'addMiddleware', ['@potogan.rest.middleware.aware_request'] ]
-            - [ 'addMiddleware', ['@potogan.rest.middleware.body_provider'] ]
+        # calls:
+        #     - [ 'addMiddleware', ['@potogan.rest.middleware.aware_request'] ]
+        #     - [ 'addMiddleware', ['@potogan.rest.middleware.body_provider'] ]
+        tags:
+            - { name: potogan.rest.chain, tag: potogan.rest.middleware, method: addMiddleware }
 
     potogan.rest.request_factory:
         class: Http\Message\Guzzle\RequestFactory
@@ -34,34 +36,48 @@ services:
 
     potogan.rest.transformer.chain:
         class: Potogan\REST\Transformer\Chain
-        calls:
-            - [ 'addTransformer', ['@potogan.rest.transformer.json']]
-            - [ 'addTransformer', ['@potogan.rest.transformer.stream']]
+        # calls:
+        #     - [ 'addTransformer', ['@potogan.rest.transformer.json']]
+        #     - [ 'addTransformer', ['@potogan.rest.transformer.stream']]
+        tags:
+            - { name: potogan.rest.chain, tag: potogan.rest.transformer, method: addTransformer }
 
     potogan.rest.transformer.json:
         class: Potogan\REST\Transformer\Json
+        tags:
+            - { name: potogan.rest.transformer }
 
     potogan.rest.transformer.stream:
         class: Potogan\REST\Transformer\Stream
         arguments:
             - '@potogan.rest.stream_factory'
+        tags:
+            - { name: potogan.rest.transformer }
 
     potogan.rest.middleware.aware_request:
         class: Potogan\REST\Middleware\AwareRequest
+        tags:
+            - { name: potogan.rest.middleware }
 
     potogan.rest.middleware.body_provider:
         class: Potogan\REST\Middleware\BodyProvider
         arguments:
             - '@potogan.rest.body_provider'
             - '@potogan.rest.transformer'
+        tags:
+            - { name: potogan.rest.middleware }
 
     potogan.rest.body_provider:
         alias: potogan.rest.body_provider.chain
 
     potogan.rest.body_provider.chain:
         class: Potogan\REST\BodyProvider\Chain
-        calls:
-            - [ 'addProvider', ['@potogan.rest.body_provider.aware_request'] ]
+        # calls:
+        #     - [ 'addProvider', ['@potogan.rest.body_provider.aware_request'] ]
+        tags:
+            - { name: potogan.rest.chain, tag: potogan.rest.body_provider, method: addProvider }
 
     potogan.rest.body_provider.aware_request:
         class: Potogan\REST\BodyProvider\AwareRequest
+        tags:
+            - { name: potogan.rest.body_provider }
