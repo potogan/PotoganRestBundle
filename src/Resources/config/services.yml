@@ -1,7 +1,8 @@
 services:
     potogan.rest.client:
-        factory_service: potogan.rest.client_factory
-        factory_method:  build
+        class: Potogan\REST\Client
+        factory: [ '@potogan.rest.client_factory', 'build' ]
+        public: true
         arguments:
             - https://example.com
 
@@ -11,9 +12,6 @@ services:
             - '@potogan.rest.request_factory'
             - '@potogan.rest.transformer'
             - '@potogan.rest.http_client'
-        # calls:
-        #     - [ 'addMiddleware', ['@potogan.rest.middleware.aware_request'] ]
-        #     - [ 'addMiddleware', ['@potogan.rest.middleware.body_provider'] ]
         tags:
             - { name: potogan.rest.chain, tag: potogan.rest.middleware, method: addMiddleware }
 
@@ -36,9 +34,6 @@ services:
 
     potogan.rest.transformer.chain:
         class: Potogan\REST\Transformer\Chain
-        # calls:
-        #     - [ 'addTransformer', ['@potogan.rest.transformer.json']]
-        #     - [ 'addTransformer', ['@potogan.rest.transformer.stream']]
         tags:
             - { name: potogan.rest.chain, tag: potogan.rest.transformer, method: addTransformer }
 
@@ -72,8 +67,6 @@ services:
 
     potogan.rest.body_provider.chain:
         class: Potogan\REST\BodyProvider\Chain
-        # calls:
-        #     - [ 'addProvider', ['@potogan.rest.body_provider.aware_request'] ]
         tags:
             - { name: potogan.rest.chain, tag: potogan.rest.body_provider, method: addProvider }
 
