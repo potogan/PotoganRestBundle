@@ -3,8 +3,6 @@ services:
         class: Potogan\REST\Client
         factory: [ '@potogan.rest.client_factory', 'build' ]
         public: true
-        arguments:
-            - https://example.com
 
     potogan.rest.client_factory:
         class: Potogan\REST\ClientFactory
@@ -12,8 +10,8 @@ services:
             - '@potogan.rest.request_factory'
             - '@potogan.rest.transformer'
             - '@potogan.rest.http_client'
-        tags:
-            - { name: potogan.rest.chain, tag: potogan.rest.middleware, method: addMiddleware }
+        calls:
+            - [ 'addMiddlewares', [!tagged 'potogan.rest.middleware'] ]
 
     potogan.rest.request_factory:
         alias: Provide any RequestFactory implementation as defined in php-http/message-factory
@@ -35,8 +33,8 @@ services:
 
     potogan.rest.transformer.chain:
         class: Potogan\REST\Transformer\Chain
-        tags:
-            - { name: potogan.rest.chain, tag: potogan.rest.transformer, method: addTransformer }
+        calls:
+            - [ 'addTransformers', [!tagged 'potogan.rest.transformer'] ]
 
     potogan.rest.transformer.json:
         class: Potogan\REST\Transformer\Json
@@ -56,14 +54,14 @@ services:
             - '@potogan.rest.annotation_reader'
             - '@potogan.rest.http.uri_merger'
         tags:
-            - { name: potogan.rest.middleware }
+            - { name: potogan.rest.middleware, priority: 200 }
 
     potogan.rest.middleware.aware_request:
         class: Potogan\REST\Middleware\AwareRequest
         arguments:
             - '@potogan.rest.http.uri_merger'
         tags:
-            - { name: potogan.rest.middleware }
+            - { name: potogan.rest.middleware, priority: 200 }
 
     potogan.rest.middleware.body_provider:
         class: Potogan\REST\Middleware\BodyProvider
@@ -71,17 +69,17 @@ services:
             - '@potogan.rest.body_provider'
             - '@potogan.rest.transformer'
         tags:
-            - { name: potogan.rest.middleware }
+            - { name: potogan.rest.middleware, priority: 100 }
 
     potogan.rest.body_provider:
         alias: potogan.rest.body_provider.chain
 
     potogan.rest.body_provider.chain:
         class: Potogan\REST\BodyProvider\Chain
-        tags:
-            - { name: potogan.rest.chain, tag: potogan.rest.body_provider, method: addProvider }
+        calls:
+            - [ 'addProviders', [!tagged 'potogan.rest.body_provider'] ]
 
-    potogan.rest.body_provider.aware_request:
-        class: Potogan\REST\BodyProvider\AwareRequest
+    potogan.rest.body_provider.body_aware_request:
+        class: Potogan\REST\BodyProvider\BodyAwareRequest
         tags:
             - { name: potogan.rest.body_provider }
