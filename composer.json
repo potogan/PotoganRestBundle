@@ -22,7 +22,7 @@
     "require": {
         "php": ">=5.5.9",
         "symfony/framework-bundle": "*",
-        "potogan/rest": "dev-master",
+        "potogan/rest": "^1.0",
         "php-http/client-implementation": "^1.0"
     },
     "suggests": {
