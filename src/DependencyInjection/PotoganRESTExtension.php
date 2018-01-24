@@ -14,9 +14,6 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class PotoganRESTExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
@@ -24,5 +21,9 @@ class PotoganRESTExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        $container->setAlias('potogan.rest.http_client', $config['http_client']);
+        $container->setAlias('potogan.rest.request_factory', $config['request_factory']);
+        $container->setAlias('potogan.rest.stream_factory', $config['stream_factory']);
     }
 }

@@ -16,18 +16,19 @@ services:
             - { name: potogan.rest.chain, tag: potogan.rest.middleware, method: addMiddleware }
 
     potogan.rest.request_factory:
-        class: Http\Message\Guzzle\RequestFactory
+        alias: Provide any RequestFactory implementation as defined in php-http/message-factory
 
     potogan.rest.stream_factory:
-        class: Http\Message\StreamFactory\GuzzleStreamFactory
-
-    potogan.rest.response_factory:
-        class: Http\Message\Guzzle\ResponseFactory
+        alias: Provide any StreamFactory implementation as defined in php-http/message-factory
 
     potogan.rest.http_client:
-        class: Http\Client\Socket\Client
-        arguments:
-            - '@potogan.rest.response_factory'
+        alias: Provide any php-http/client-implementation
+
+    potogan.rest.annotation_reader:
+        alias: annotation_reader
+
+    potogan.rest.http.uri_merger:
+        class: Potogan\REST\Http\UriMerger
 
     potogan.rest.transformer:
         alias: potogan.rest.transformer.chain
@@ -49,8 +50,18 @@ services:
         tags:
             - { name: potogan.rest.transformer }
 
+    potogan.rest.middleware.annotation_reader:
+        class: Potogan\REST\Middleware\AnnotationReader
+        arguments:
+            - '@potogan.rest.annotation_reader'
+            - '@potogan.rest.http.uri_merger'
+        tags:
+            - { name: potogan.rest.middleware }
+
     potogan.rest.middleware.aware_request:
         class: Potogan\REST\Middleware\AwareRequest
+        arguments:
+            - '@potogan.rest.http.uri_merger'
         tags:
             - { name: potogan.rest.middleware }
 

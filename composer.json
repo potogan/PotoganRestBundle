@@ -22,9 +22,12 @@
     "require": {
         "php": ">=5.5.9",
         "symfony/framework-bundle": "*",
+        "potogan/rest": "dev-master",
+        "php-http/client-implementation": "^1.0"
+    },
+    "suggests": {
         "php-http/message": "^1.6",
-        "php-http/socket-client": "^1.4",
         "ralfmaxxx/guzzle-psr7-http-message-factory": "^1.0",
-        "potogan/rest": "dev-master"
+        "php-http/socket-client": "^1.4"
     }
 }

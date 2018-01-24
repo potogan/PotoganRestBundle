@@ -20,6 +20,26 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('potogan_rest');
 
+        $rootNode
+            ->children()
+                ->scalarNode('http_client')
+                    ->info('Provide any php-http/client-implementation service id.')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->scalarNode('request_factory')
+                    ->info('Provide any RequestFactory implementation as defined in php-http/message-factory.')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->scalarNode('stream_factory')
+                    ->info('Provide any StreamFactory implementation as defined in php-http/message-factory.')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+            ->end()
+        ;
+
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.
