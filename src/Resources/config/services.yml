@@ -8,7 +8,6 @@ services:
         class: Potogan\REST\ClientFactory
         arguments:
             - '@potogan.rest.request_factory'
-            - '@potogan.rest.transformer'
             - '@potogan.rest.http_client'
         calls:
             - [ 'addMiddlewares', [!tagged 'potogan.rest.middleware'] ]
