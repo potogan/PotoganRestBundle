@@ -47,6 +47,13 @@ services:
         tags:
             - { name: potogan.rest.transformer }
 
+    potogan.rest.middleware.request_class_map_uri:
+        class: Potogan\REST\Middleware\RequestClassMapUri
+        arguments:
+            - '@potogan.rest.http.uri_merger'
+        tags:
+            - { name: potogan.rest.middleware, priority: 250 }
+
     potogan.rest.middleware.annotation_reader:
         class: Potogan\REST\Middleware\AnnotationReader
         arguments:

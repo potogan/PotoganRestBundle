@@ -25,5 +25,11 @@ class PotoganRESTExtension extends Extension
         $container->setAlias('potogan.rest.http_client', $config['http_client']);
         $container->setAlias('potogan.rest.request_factory', $config['request_factory']);
         $container->setAlias('potogan.rest.stream_factory', $config['stream_factory']);
+
+        // Init class map
+        $container
+            ->getDefinition('potogan.rest.middleware.request_class_map_uri')
+            ->setArgument(1, $config['uri_class_map'])
+        ;
     }
 }

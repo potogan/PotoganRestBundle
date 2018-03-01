@@ -37,6 +37,14 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
+
+                ->arrayNode('uri_class_map')
+                    ->normalizeKeys(false)
+                    ->ignoreExtraKeys()
+
+                    ->scalarPrototype()
+                    ->end()
+                ->end()
             ->end()
         ;
 
